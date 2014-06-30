@@ -11,7 +11,6 @@ import Data.Random.Extras (choicesArray)
 import Data.Array (listArray)
 import Data.List (intercalate)
 import Control.Monad (liftM)
-import Data.Monoid (mconcat)
 
 type Prediction = String
 type Chance = String -- Should be constrained to be an integer percentage of no more than 3 digits.
