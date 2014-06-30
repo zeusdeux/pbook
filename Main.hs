@@ -9,7 +9,7 @@ import Control.Monad (liftM)
 import Data.Monoid (mconcat)
 
 type Prediction = String
-type Chance = String -- Constrained to be an integer percentage of no more than 3 digits.
+type Chance = String -- Should be constrained to be an integer percentage of no more than 3 digits.
 type Date = String 
 type AuthenticityToken = String
 type UUID = String
