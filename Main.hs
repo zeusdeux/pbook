@@ -1,5 +1,9 @@
 module PBook where
-import Network.HTTP
+
+import Network.Browser
+import Data.Maybe (fromJust)
+import Network.HTTP.Base (RequestMethod(POST))
+import Network.URI
 import Data.Random
 import Data.Random.Source.DevRandom
 import Data.Random.Extras (choicesArray)
@@ -31,10 +35,22 @@ getUUID = liftM (intercalate "-") $ mapM hexes [8,4,4,4,12]
 
 postPrediction :: Prediction -> Chance -> Date -> AuthenticityToken -> UUID -> IO ()
 postPrediction p c d t u = do
-  let params = shows "utf8=✓&authenticity_token=" . shows t . shows "&prediction[uuid]=" . shows u . shows "&prediction[description]=" . shows p . shows "&prediction[initial_confidence]=" . shows c . shows "&prediction[deadline_text]=" $ d
-  let req = postRequestWithBody "http://predictionbook.com/predictions/" "application/x-www-form-urlencoded" params 
-  res <- simpleHTTP req
+  let req = formToRequest $ Form POST (fromJust $ parseURI "http://predictionbook.com/predictions/") [("utf8","✓"), ("authenticity_token",t), ("prediction[uuid]",u),("prediction[description]",p), ("prediction[initial_confidence]",c), ("prediction[deadline_text]",d)]
+  --"application/x-www-form-urlencoded" 
+  auth <- promptAuth
+  res <- browse $ do
+    setAllowBasicAuth True
+    addAuthority auth 
+    request req
   print res
+
+promptAuth :: IO Authority
+promptAuth = putStrLn "Authorize?" >> 
+	     return AuthBasic { auRealm = "predictionbook.com",  
+			        auUsername = "mavant", 
+			        auPassword = undefined, 
+			        auSite = fromJust $ parseURI "http://predictionbook.com" -- I know, I know, this is evil.
+			     }
 
 promptPrediction :: IO Prediction
 promptPrediction = putStrLn "What do you think will (or won't) happen?" >> getLine
