@@ -1,5 +1,5 @@
 {-#LANGUAGE NamedFieldPuns #-}
-module PBook where
+module PBook () where 
 
 import Network.Browser
 import Data.Maybe (fromJust)
@@ -37,13 +37,20 @@ genUUID = liftM (intercalate "-") $ mapM hexes [8,4,4,4,12]
 
 postPrediction :: Prediction -> Chance -> Date -> AuthenticityToken -> UUID -> IO ()
 postPrediction p c d t u = do
-  let req = formToRequest $ Form POST (fromJust $ parseURI "http://predictionbook.com/predictions/") [("utf8","✓"), ("authenticity_token",t), ("prediction[uuid]",u),("prediction[description]",p), ("prediction[initial_confidence]",c), ("prediction[deadline_text]",d)]
   auth <- promptAuth
   res <- browse $ do
     setAllowBasicAuth True
     addAuthority auth 
-    request req
+    request $ formToRequest predictionForm
   print res
+  where predictionForm = Form POST 
+	  (fromJust $ parseURI "http://predictionbook.com/predictions/") 
+	  [("utf8","✓"), 
+	   ("authenticity_token",t), 
+	   ("prediction[uuid]",u),
+	   ("prediction[description]",p), 
+	   ("prediction[initial_confidence]",c), 
+	   ("prediction[deadline_text]",d)]
 
 promptAuth :: IO Authority
 promptAuth = do
