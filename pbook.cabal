@@ -6,7 +6,7 @@ version:             0.1.0.0
 synopsis:            A command-line interface to predictionbook.com
 -- description:         
 homepage:            github.com/mavant/pbook
-license:             GPL-3
+license:             BSD2
 license-file:        LICENSE
 author:              Matthew Avant
 maintainer:          matthew.avant@gmail.com
