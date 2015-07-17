@@ -1,5 +1,5 @@
 {-#LANGUAGE NamedFieldPuns #-}
-module PBook () where 
+module Main (main) where 
 
 import Network.Browser
 import Data.Maybe (fromJust)
